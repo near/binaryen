@@ -71,9 +71,7 @@ jobs:
         SHASUM=$PKGNAME.tar.gz.sha256
         rm -rf binaryen-$VERSION
         mv out/install binaryen-$VERSION
-        rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
-        rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
+        tar -czf $TARBALL binaryen-$VERSION/lib wasi-stub
         # on Windows, MSYS2 will strip the carriage return from CMake output
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
@@ -89,9 +87,7 @@ jobs:
         SHASUM=$PKGNAME.tar.gz.sha256
         rm -rf binaryen-$VERSION
         mv out-arm64/install binaryen-$VERSION
-        rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
-        rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
+        tar -czf $TARBALL binaryen-$VERSION/lib wasi-stub
         # on Windows, MSYS2 will strip the carriage return from CMake output
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
@@ -154,9 +150,7 @@ jobs:
         SHASUM=$PKGNAME.tar.gz.sha256
         ./alpine.sh find install/ -type f -perm -u=x -exec strip {} +
         mv install binaryen-$VERSION
-        rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
-        rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
+        tar -czf $TARBALL binaryen-$VERSION/lib wasi-stub
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
         echo "::set-output name=shasum::$SHASUM"
