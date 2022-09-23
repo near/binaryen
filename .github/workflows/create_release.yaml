@@ -58,6 +58,9 @@ jobs:
       run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
       if: matrix.os != 'windows-latest'
 
+    - name: build wasi-stub
+      run: cd wasi-stub && ./build.sh && cd ..
+
     - name: archive
       id: archive
       run: |
@@ -70,7 +73,7 @@ jobs:
         mv out/install binaryen-$VERSION
         rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
         rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION
+        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
         # on Windows, MSYS2 will strip the carriage return from CMake output
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
@@ -88,7 +91,7 @@ jobs:
         mv out-arm64/install binaryen-$VERSION
         rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
         rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION
+        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
         # on Windows, MSYS2 will strip the carriage return from CMake output
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
@@ -153,7 +156,7 @@ jobs:
         mv install binaryen-$VERSION
         rm -rf binaryen-$VERSION/include #not needed for NEAR SDK JS
         rm -rf binaryen-$VERSION/bin  #not needed for NEAR SDK JS
-        tar -czf $TARBALL binaryen-$VERSION
+        tar -czf $TARBALL binaryen-$VERSION  wasi-stub
         cmake -E sha256sum $TARBALL > $SHASUM
         echo "::set-output name=tarball::$TARBALL"
         echo "::set-output name=shasum::$SHASUM"
