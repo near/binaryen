@@ -50,16 +50,16 @@ jobs:
       - name: build
         run: cmake --build out -v --config Release --target install
 
-      - name: build-arm64
-        run: cmake --build out-arm64 -v --config Release --target install
-        if: matrix.os == 'macos-latest'
+      # - name: build-arm64
+      #   run: cmake --build out-arm64 -v --config Release --target install
+      #   if: matrix.os == 'macos-latest'
 
       - name: strip
         run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
         if: matrix.os != 'windows-latest'
       
-      - name: ls binaryen-$VERSION
-        run: ls binaryen-$VERSION
+      - name: ls binaryen-$GITHUB_REF_NAME
+        run: ls binaryen-$GITHUB_REF_NAME
 
       - name: ls out
         run: ls out
@@ -83,22 +83,22 @@ jobs:
           echo "::set-output name=tarball::$TARBALL"
           echo "::set-output name=shasum::$SHASUM"
 
-      - name: archive-arm64
-        id: archive-arm64
-        run: |
-          OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
-          VERSION=$GITHUB_REF_NAME
-          PKGNAME="binaryen-$VERSION-arm64-$OSNAME"
-          TARBALL=$PKGNAME.tar.gz
-          SHASUM=$PKGNAME.tar.gz.sha256
-          rm -rf binaryen-$VERSION
-          mv out-arm64/install binaryen-$VERSION
-          tar -czf $TARBALL binaryen-$VERSION
-          # on Windows, MSYS2 will strip the carriage return from CMake output
-          cmake -E sha256sum $TARBALL > $SHASUM
-          echo "::set-output name=tarball::$TARBALL"
-          echo "::set-output name=shasum::$SHASUM"
-        if: matrix.os == 'macos-latest'
+      # - name: archive-arm64
+      #   id: archive-arm64
+      #   run: |
+      #     OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
+      #     VERSION=$GITHUB_REF_NAME
+      #     PKGNAME="binaryen-$VERSION-arm64-$OSNAME"
+      #     TARBALL=$PKGNAME.tar.gz
+      #     SHASUM=$PKGNAME.tar.gz.sha256
+      #     rm -rf binaryen-$VERSION
+      #     mv out-arm64/install binaryen-$VERSION
+      #     tar -czf $TARBALL binaryen-$VERSION
+      #     # on Windows, MSYS2 will strip the carriage return from CMake output
+      #     cmake -E sha256sum $TARBALL > $SHASUM
+      #     echo "::set-output name=tarball::$TARBALL"
+      #     echo "::set-output name=shasum::$SHASUM"
+      #   if: matrix.os == 'macos-latest'
 
       - name: upload tarball
         uses: softprops/action-gh-release@v1
