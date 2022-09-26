@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest] #TODO: addd windows-latest
+        os: [macos-latest, windows-latest]
     defaults:
       run:
         shell: bash
@@ -50,22 +50,13 @@ jobs:
       - name: build
         run: cmake --build out -v --config Release --target install
 
-      # - name: build-arm64
-      #   run: cmake --build out-arm64 -v --config Release --target install
-      #   if: matrix.os == 'macos-latest'
+      - name: build-arm64
+        run: cmake --build out-arm64 -v --config Release --target install
+        if: matrix.os == 'macos-latest'
 
       - name: strip
         run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
         if: matrix.os != 'windows-latest'
-      
-      - name: ls binaryen-$GITHUB_REF_NAME
-        run: ls binaryen-$GITHUB_REF_NAME
-
-      - name: ls out
-        run: ls out
-
-      - name: ls out/install
-        run: ls out/install
 
       - name: archive
         id: archive
@@ -83,22 +74,22 @@ jobs:
           echo "::set-output name=tarball::$TARBALL"
           echo "::set-output name=shasum::$SHASUM"
 
-      # - name: archive-arm64
-      #   id: archive-arm64
-      #   run: |
-      #     OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
-      #     VERSION=$GITHUB_REF_NAME
-      #     PKGNAME="binaryen-$VERSION-arm64-$OSNAME"
-      #     TARBALL=$PKGNAME.tar.gz
-      #     SHASUM=$PKGNAME.tar.gz.sha256
-      #     rm -rf binaryen-$VERSION
-      #     mv out-arm64/install binaryen-$VERSION
-      #     tar -czf $TARBALL binaryen-$VERSION
-      #     # on Windows, MSYS2 will strip the carriage return from CMake output
-      #     cmake -E sha256sum $TARBALL > $SHASUM
-      #     echo "::set-output name=tarball::$TARBALL"
-      #     echo "::set-output name=shasum::$SHASUM"
-      #   if: matrix.os == 'macos-latest'
+      - name: archive-arm64
+        id: archive-arm64
+        run: |
+          OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
+          VERSION=$GITHUB_REF_NAME
+          PKGNAME="binaryen-$VERSION-arm64-$OSNAME"
+          TARBALL=$PKGNAME.tar.gz
+          SHASUM=$PKGNAME.tar.gz.sha256
+          rm -rf binaryen-$VERSION
+          mv out-arm64/install binaryen-$VERSION
+          tar -czf $TARBALL binaryen-$VERSION
+          # on Windows, MSYS2 will strip the carriage return from CMake output
+          cmake -E sha256sum $TARBALL > $SHASUM
+          echo "::set-output name=tarball::$TARBALL"
+          echo "::set-output name=shasum::$SHASUM"
+        if: matrix.os == 'macos-latest'
 
       - name: upload tarball
         uses: softprops/action-gh-release@v1
@@ -110,61 +101,61 @@ jobs:
             ${{ steps.archive-arm64.outputs.tarball }}
             ${{ steps.archive-arm64.outputs.shasum }}
 
-  # # Build with gcc 6.3 and run tests on Alpine Linux (inside chroot).
-  # # Note: Alpine uses musl libc.
-  # build-alpine:
-  #   name: alpine
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/setup-python@v1
-  #     with:
-  #       python-version: '3.x'
-  #   - uses: actions/checkout@v1
-  #     with:
-  #       submodules: true
-  #   - name: start docker
-  #     run: |
-  #       docker run -w /src -dit --name alpine -v $PWD:/src node:lts-alpine
-  #       echo 'docker exec alpine "$@";' > ./alpine.sh
-  #       chmod +x ./alpine.sh
+  # Build with gcc 6.3 and run tests on Alpine Linux (inside chroot).
+  # Note: Alpine uses musl libc.
+  build-alpine:
+    name: alpine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.x"
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: start docker
+        run: |
+          docker run -w /src -dit --name alpine -v $PWD:/src node:lts-alpine
+          echo 'docker exec alpine "$@";' > ./alpine.sh
+          chmod +x ./alpine.sh
 
-  #   - name: install packages
-  #     run: |
-  #       ./alpine.sh apk update
-  #       ./alpine.sh apk add build-base cmake git python3 clang ninja py3-pip
+      - name: install packages
+        run: |
+          ./alpine.sh apk update
+          ./alpine.sh apk add build-base cmake git python3 clang ninja py3-pip
 
-  #   - name: install python dev dependencies
-  #     run: ./alpine.sh pip3 install -r requirements-dev.txt
+      - name: install python dev dependencies
+        run: ./alpine.sh pip3 install -r requirements-dev.txt
 
-  #   - name: cmake
-  #     run: |
-  #       ./alpine.sh cmake . -G Ninja -DCMAKE_CXX_FLAGS="-static" -DCMAKE_C_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIB=ON -DCMAKE_INSTALL_PREFIX=install
+      - name: cmake
+        run: |
+          ./alpine.sh cmake . -G Ninja -DCMAKE_CXX_FLAGS="-static" -DCMAKE_C_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIB=ON -DCMAKE_INSTALL_PREFIX=install
 
-  #   - name: build
-  #     run: |
-  #       ./alpine.sh ninja install
+      - name: build
+        run: |
+          ./alpine.sh ninja install
 
-  #   - name: test
-  #     run: ./alpine.sh python3 ./check.py
+      - name: test
+        run: ./alpine.sh python3 ./check.py
 
-  #   - name: archive
-  #     id: archive
-  #     run: |
-  #       VERSION=$GITHUB_REF_NAME
-  #       PKGNAME="binaryen-$VERSION-x86_64-linux"
-  #       TARBALL=$PKGNAME.tar.gz
-  #       SHASUM=$PKGNAME.tar.gz.sha256
-  #       ./alpine.sh find install/ -type f -perm -u=x -exec strip {} +
-  #       mv install binaryen-$VERSION
-  #       tar -czf $TARBALL binaryen-$VERSION
-  #       cmake -E sha256sum $TARBALL > $SHASUM
-  #       echo "::set-output name=tarball::$TARBALL"
-  #       echo "::set-output name=shasum::$SHASUM"
+      - name: archive
+        id: archive
+        run: |
+          VERSION=$GITHUB_REF_NAME
+          PKGNAME="binaryen-$VERSION-x86_64-linux"
+          TARBALL=$PKGNAME.tar.gz
+          SHASUM=$PKGNAME.tar.gz.sha256
+          ./alpine.sh find install/ -type f -perm -u=x -exec strip {} +
+          mv install binaryen-$VERSION
+          tar -czf $TARBALL binaryen-$VERSION
+          cmake -E sha256sum $TARBALL > $SHASUM
+          echo "::set-output name=tarball::$TARBALL"
+          echo "::set-output name=shasum::$SHASUM"
 
-  #   - name: upload tarball
-  #     uses: softprops/action-gh-release@v1
-  #     with:
-  #       draft: true
-  #       files: |
-  #         ${{ steps.archive.outputs.tarball }}
-  #         ${{ steps.archive.outputs.shasum }}
+      - name: upload tarball
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            ${{ steps.archive.outputs.tarball }}
+            ${{ steps.archive.outputs.shasum }}
