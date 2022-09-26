@@ -1,4 +1,4 @@
-name: CI
+name: CI SSH MAC
 on: [push]
 jobs:
   build:

@@ -1,4 +1,4 @@
-name: CI
+name: CI SSH UBUNTU
 on: [push]
 jobs:
   build:
