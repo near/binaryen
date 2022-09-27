@@ -474,3 +474,7 @@ if(EMSCRIPTEN)
 endif()
 
 configure_file(scripts/binaryen-lit.in ${CMAKE_BINARY_DIR}/bin/binaryen-lit @ONLY)
+
+# wasi-stub is used in NEAR SDK JS
+add_executable(wasi-stub wasi-stub/wasi-stub.c)
+target_link_libraries(wasi-stub PRIVATE binaryen)
