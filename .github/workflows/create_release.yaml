@@ -141,6 +141,9 @@ jobs:
       - name: test
         run: ./alpine.sh python3 ./check.py
 
+      - name: build wasi-stub
+        run: docker exec --workdir /src/wasi-stub alpine /bin/sh build.sh
+
       - name: Setup upterm session
         uses: lhotari/action-upterm@v1
         
