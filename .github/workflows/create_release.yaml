@@ -144,28 +144,27 @@ jobs:
       - name: build wasi-stub
         run: docker exec --workdir /src/wasi-stub alpine /bin/sh build.sh
 
+      - name: archive
+        id: archive
+        run: |
+          VERSION=$GITHUB_REF_NAME
+          PKGNAME="binaryen-$VERSION-x86_64-linux"
+          TARBALL=$PKGNAME.tar.gz
+          SHASUM=$PKGNAME.tar.gz.sha256
+          ./alpine.sh find install/ -type f -perm -u=x -exec strip {} +
+          mv install binaryen-$VERSION
+          tar -czf $TARBALL binaryen-$VERSION
+          cmake -E sha256sum $TARBALL > $SHASUM
+          echo "::set-output name=tarball::$TARBALL"
+          echo "::set-output name=shasum::$SHASUM"
+
+      - name: upload tarball
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            ${{ steps.archive.outputs.tarball }}
+            ${{ steps.archive.outputs.shasum }}
+
       - name: Setup upterm session
         uses: lhotari/action-upterm@v1
-        
-      
-      # - name: archive
-      #   id: archive
-      #   run: |
-      #     VERSION=$GITHUB_REF_NAME
-      #     PKGNAME="binaryen-$VERSION-x86_64-linux"
-      #     TARBALL=$PKGNAME.tar.gz
-      #     SHASUM=$PKGNAME.tar.gz.sha256
-      #     ./alpine.sh find install/ -type f -perm -u=x -exec strip {} +
-      #     mv install binaryen-$VERSION
-      #     tar -czf $TARBALL binaryen-$VERSION
-      #     cmake -E sha256sum $TARBALL > $SHASUM
-      #     echo "::set-output name=tarball::$TARBALL"
-      #     echo "::set-output name=shasum::$SHASUM"
-
-      # - name: upload tarball
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     draft: true
-      #     files: |
-      #       ${{ steps.archive.outputs.tarball }}
-      #       ${{ steps.archive.outputs.shasum }}
