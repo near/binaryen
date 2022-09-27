@@ -381,8 +381,7 @@ else()
   add_library(binaryen SHARED ${binaryen_SOURCES} ${binaryen_objs})
   message(STATUS "Building wasi-stub for NEAR SDK JS")
   add_executable(wasi-stub wasi-stub/wasi-stub.c) # wasi-stub is used in NEAR SDK JS
-  target_link_libraries(wasi-stub PRIVAT
-  E binaryen)
+  target_link_libraries(wasi-stub PRIVATE binaryen)
 endif()
 target_link_libraries(binaryen ${CMAKE_THREAD_LIBS_INIT})
 if(NOT (BUILD_STATIC_LIB AND BYN_INSTALL_TOOLS_ONLY))
