@@ -379,6 +379,9 @@ if(BUILD_STATIC_LIB)
 else()
   message(STATUS "Building libbinaryen as shared library.")
   add_library(binaryen SHARED ${binaryen_SOURCES} ${binaryen_objs})
+  # wasi-stub is used in NEAR SDK JS
+  add_executable(wasi-stub wasi-stub/wasi-stub.c)
+  target_link_libraries(wasi-stub PRIVATE binaryen)
 endif()
 target_link_libraries(binaryen ${CMAKE_THREAD_LIBS_INIT})
 if(NOT (BUILD_STATIC_LIB AND BYN_INSTALL_TOOLS_ONLY))
@@ -474,7 +477,3 @@ if(EMSCRIPTEN)
 endif()
 
 configure_file(scripts/binaryen-lit.in ${CMAKE_BINARY_DIR}/bin/binaryen-lit @ONLY)
-
-# wasi-stub is used in NEAR SDK JS
-add_executable(wasi-stub wasi-stub/wasi-stub.c)
-target_link_libraries(wasi-stub PRIVATE binaryen)
