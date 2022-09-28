@@ -473,8 +473,8 @@ if(EMSCRIPTEN)
   install(TARGETS binaryen_js DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
-message(STATUS "Building wasi-stub for NEAR SDK JS")
-add_executable(wasi-stub wasi-stub/wasi-stub.c)
-target_link_libraries(wasi-stub PRIVATE binaryen)
+# message(STATUS "Building wasi-stub for NEAR SDK JS")
+# add_executable(wasi-stub wasi-stub/wasi-stub.c)
+# target_link_libraries(wasi-stub PRIVATE binaryen)
 
 configure_file(scripts/binaryen-lit.in ${CMAKE_BINARY_DIR}/bin/binaryen-lit @ONLY)
