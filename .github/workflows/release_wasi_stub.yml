@@ -65,7 +65,7 @@ jobs:
           PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME"
           SHASUM=$PKGNAME.sha256
           ./alpine.sh strip out/bin/wasi-stub
-          mv out/bin/wasi-stub $PKGNAME
+          ./alpine mv out/bin/wasi-stub $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
@@ -78,7 +78,7 @@ jobs:
           PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME"
           SHASUM=$PKGNAME.sha256
           ./alpine.sh strip out/bin/wasi-stub
-          mv out-arm64/bin/wasi-stub $PKGNAME
+          ./alpine mv out-arm64/bin/wasi-stub $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
@@ -139,7 +139,7 @@ jobs:
           PKGNAME="wasi-stub-$VERSION-x86_64-linux"
           SHASUM=$PKGNAME.sha256
           ./alpine.sh strip out/bin/wasi-stub
-          mv out/bin/wasi-stub $PKGNAME
+          ./alpine mv out/bin/wasi-stub $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
