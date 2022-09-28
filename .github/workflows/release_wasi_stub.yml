@@ -1,4 +1,4 @@
-name: Create Release
+name: Release wasi-stub
 
 # Trigger whenever a tag is created/updated
 
