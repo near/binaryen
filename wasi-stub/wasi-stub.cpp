@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   fseek( input, 0, SEEK_END );
   size_t size = ftell(input);
   fseek( input, 0, SEEK_SET );
-  char *buf = malloc(size);
+  char *buf = (char*)malloc(size);
   if (buf == NULL) {
     fprintf(stderr, "Unable to alloc buffer to read.\n");
     exit(1);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
   }
 
   size_t output_size = 2*size;
-  char* output_buf = malloc(output_size);
+  char* output_buf = (char*)malloc(output_size);
   if (output_buf == NULL) {
     fprintf(stderr, "Unable to alloc buffer to write.\n");
     exit(1);

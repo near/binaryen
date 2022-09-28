@@ -474,7 +474,7 @@ if(EMSCRIPTEN)
 endif()
 
 message(STATUS "Building wasi-stub for NEAR SDK JS")
-add_executable(wasi-stub wasi-stub/wasi-stub.c)
+add_executable(wasi-stub wasi-stub/wasi-stub.cpp)
 target_link_libraries(wasi-stub PRIVATE binaryen)
 
 configure_file(scripts/binaryen-lit.in ${CMAKE_BINARY_DIR}/bin/binaryen-lit @ONLY)
