@@ -100,7 +100,8 @@ jobs:
             ${{ steps.archive.outputs.shasum }}
             ${{ steps.archive-arm64.outputs.tarball }}
             ${{ steps.archive-arm64.outputs.shasum }}
-q
+
+
       - name: Setup upterm session
         uses: lhotari/action-upterm@v1
 
