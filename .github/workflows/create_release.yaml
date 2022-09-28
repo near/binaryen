@@ -139,9 +139,6 @@ jobs:
         run: |
           ./alpine.sh ninja install
 
-      - name: test
-        run: ./alpine.sh python3 ./check.py
-
       - name: archive
         id: archive
         run: |
