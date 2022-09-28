@@ -58,9 +58,6 @@ jobs:
         run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
         if: matrix.os != 'windows-latest'
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
-
       - name: archive
         id: archive
         run: |
