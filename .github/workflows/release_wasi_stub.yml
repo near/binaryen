@@ -101,6 +101,9 @@ jobs:
           echo "::set-output name=shasum::$SHASUM"
         if: matrix.os == 'macos-latest'
 
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+
       - name: upload wasi-stub
         uses: softprops/action-gh-release@v1
         with:
