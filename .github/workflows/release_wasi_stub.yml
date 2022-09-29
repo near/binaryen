@@ -42,8 +42,8 @@ jobs:
 
       - name: cmake (macos)
         run: |
-          cmake -S . -B out-arm64 -G Ninja -DCMAKE_CXX_FLAGS="-static" -DCMAKE_C_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIB=ON -DCMAKE_OSX_ARCHITECTURES=arm64
-          cmake -S . -B out -G Ninja -DCMAKE_CXX_FLAGS="-static" -DCMAKE_C_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIB=ON -DCMAKE_OSX_ARCHITECTURES=x86_64
+          cmake -S . -B out -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=out/install -DCMAKE_OSX_ARCHITECTURES=x86_64
+          cmake -S . -B out-arm64 -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=out/install -DCMAKE_OSX_ARCHITECTURES=arm64
         if: matrix.os == 'macos-latest'
 
       - name: cmake (win)
@@ -97,7 +97,7 @@ jobs:
           VERSION=$GITHUB_REF_NAME
           PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME"
           SHASUM=$PKGNAME.sha256
-          strip out/bin/wasi-stub
+          strip out-arm64/bin/wasi-stub
           mv out-arm64/bin/wasi-stub $PKGNAME
           chmod 777 $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
