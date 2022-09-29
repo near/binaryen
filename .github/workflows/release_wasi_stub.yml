@@ -54,7 +54,7 @@ jobs:
         if: matrix.os == 'macos-latest'
 
       - name: strip
-        run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
+        run: find out*/bin/ -type f -perm -u=x -exec strip -x {} +
         if: matrix.os != 'windows-latest'
 
       - name: prepare-windows
