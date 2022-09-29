@@ -36,9 +36,6 @@ jobs:
       - name: mkdir
         run: mkdir -p out
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
-        if: matrix.os == 'macos-latest'
 
       - name: cmake (macos)
         run: |
@@ -171,6 +168,3 @@ jobs:
           files: |
             ${{ steps.prepare.outputs.ws }}
             ${{ steps.prepare.outputs.shasum }}
-
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
