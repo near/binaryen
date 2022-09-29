@@ -110,8 +110,8 @@ jobs:
         with:
           draft: true
           files: |
-            ${{ steps.preparewindows.outputs.ws }}
-            ${{ steps.preparewindows.outputs.shasum }}
+            ${{ steps.prepare-windows.outputs.ws }}
+            ${{ steps.prepare-windows.outputs.shasum }}
             ${{ steps.prepare-mac-x86.outputs.ws }}
             ${{ steps.prepare-mac-x86.outputs.shasum }}
             ${{ steps.prepare-mac-arm64.outputs.ws }}
