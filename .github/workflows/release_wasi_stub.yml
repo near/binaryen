@@ -36,6 +36,9 @@ jobs:
       - name: mkdir
         run: mkdir -p out
 
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+
       - name: cmake (macos)
         run: |
           cmake -S . -B out-arm64 -G Ninja -DCMAKE_CXX_FLAGS="-static" -DCMAKE_C_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIB=ON -DCMAKE_OSX_ARCHITECTURES=arm64
@@ -95,10 +98,6 @@ jobs:
             ${{ steps.prepare.outputs.shasum }}
             ${{ steps.prepare-arm64.outputs.ws }}
             ${{ steps.prepare-arm64.outputs.shasum }}
-
-
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
 
   # Build with gcc 6.3 and run tests on Alpine Linux (inside chroot).
   # Note: Alpine uses musl libc.
