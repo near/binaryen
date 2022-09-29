@@ -38,6 +38,7 @@ jobs:
 
       - name: Setup upterm session
         uses: lhotari/action-upterm@v1
+        if: matrix.os == 'macos-latest'
 
       - name: cmake (macos)
         run: |
@@ -67,9 +68,9 @@ jobs:
           VERSION=$GITHUB_REF_NAME
           PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME"
           SHASUM=$PKGNAME.sha256
-          ./alpine.sh strip out/bin/wasi-stub
-          ./alpine.sh mv out/bin/wasi-stub $PKGNAME
-          ./alpine.sh chmod 777 $PKGNAME
+          strip out/bin/wasi-stub
+          mv out/bin/wasi-stub $PKGNAME
+          chmod 777 $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
@@ -81,9 +82,9 @@ jobs:
           VERSION=$GITHUB_REF_NAME
           PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME"
           SHASUM=$PKGNAME.sha256
-          ./alpine.sh strip out/bin/wasi-stub
-          ./alpine.sh mv out-arm64/bin/wasi-stub $PKGNAME
-          ./alpine.sh chmod 777 $PKGNAME
+          strip out/bin/wasi-stub
+          mv out-arm64/bin/wasi-stub $PKGNAME
+          chmod 777 $PKGNAME
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
