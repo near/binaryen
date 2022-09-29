@@ -61,8 +61,22 @@ jobs:
         run: find out*/install/ -type f -perm -u=x -exec strip -x {} +
         if: matrix.os != 'windows-latest'
 
-      - name: prepare
-        id: prepare
+      - name: prepare-windows
+        id: prepare-windows
+        run: |
+          OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
+          VERSION=$GITHUB_REF_NAME
+          PKGNAME="wasi-stub-$VERSION-x86_64-$OSNAME.exe"
+          SHASUM=$PKGNAME.sha256
+          strip out/bin/wasi-stub.exe
+          mv out/bin/wasi-stub.exe $PKGNAME
+          cmake -E sha256sum $PKGNAME > $SHASUM
+          echo "::set-output name=ws::$PKGNAME"
+          echo "::set-output name=shasum::$SHASUM"
+        if: matrix.os == 'windows-latest'
+
+      - name: prepare-mac-x86
+        id: prepare-mac-x86
         run: |
           OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
           VERSION=$GITHUB_REF_NAME
@@ -74,9 +88,10 @@ jobs:
           cmake -E sha256sum $PKGNAME > $SHASUM
           echo "::set-output name=ws::$PKGNAME"
           echo "::set-output name=shasum::$SHASUM"
+        if: matrix.os == 'macos-latest'
 
-      - name: prepare-arm64
-        id: prepare-arm64
+      - name: prepare-mac-arm64
+        id: prepare-mac-arm64
         run: |
           OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
           VERSION=$GITHUB_REF_NAME
@@ -95,10 +110,12 @@ jobs:
         with:
           draft: true
           files: |
-            ${{ steps.prepare.outputs.ws }}
-            ${{ steps.prepare.outputs.shasum }}
-            ${{ steps.prepare-arm64.outputs.ws }}
-            ${{ steps.prepare-arm64.outputs.shasum }}
+            ${{ steps.preparewindows.outputs.ws }}
+            ${{ steps.preparewindows.outputs.shasum }}
+            ${{ steps.prepare-mac-x86.outputs.ws }}
+            ${{ steps.prepare-mac-x86.outputs.shasum }}
+            ${{ steps.prepare-mac-arm64.outputs.ws }}
+            ${{ steps.prepare-mac-arm64.outputs.shasum }}
 
   # Build with gcc 6.3 and run tests on Alpine Linux (inside chroot).
   # Note: Alpine uses musl libc.
