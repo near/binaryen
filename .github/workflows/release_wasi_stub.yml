@@ -61,8 +61,7 @@ jobs:
         id: prepare-windows
         run: |
           OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
-          VERSION=$GITHUB_REF_NAME
-          PKGNAME="wasi-stub-$VERSION-x64-$OSNAME.exe"
+          PKGNAME="wasi-stub-x64-$OSNAME.exe"
           SHASUM=$PKGNAME.sha256
           strip out/bin/wasi-stub.exe
           mv out/bin/wasi-stub.exe $PKGNAME
@@ -75,8 +74,7 @@ jobs:
         id: prepare-mac-x86
         run: |
           OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
-          VERSION=$GITHUB_REF_NAME
-          PKGNAME="wasi-stub-$VERSION-x64-$OSNAME"
+          PKGNAME="wasi-stub-x64-$OSNAME"
           SHASUM=$PKGNAME.sha256
           strip out/bin/wasi-stub
           mv out/bin/wasi-stub $PKGNAME
@@ -90,8 +88,7 @@ jobs:
         id: prepare-mac-arm64
         run: |
           OSNAME=$(echo ${{ matrix.os }} | sed 's/-latest//')
-          VERSION=$GITHUB_REF_NAME
-          PKGNAME="wasi-stub-$VERSION-arm64-$OSNAME"
+          PKGNAME="wasi-stub-arm64-$OSNAME"
           SHASUM=$PKGNAME.sha256
           strip out-arm64/bin/wasi-stub
           mv out-arm64/bin/wasi-stub $PKGNAME
@@ -150,8 +147,7 @@ jobs:
       - name: prepare
         id: prepare
         run: |
-          VERSION=$GITHUB_REF_NAME
-          PKGNAME="wasi-stub-$VERSION-x64-linux"
+          PKGNAME="wasi-stub-x64-linux"
           SHASUM=$PKGNAME.sha256
           ./alpine.sh strip out/bin/wasi-stub
           ./alpine.sh mv out/bin/wasi-stub $PKGNAME
