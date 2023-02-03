@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.platform }} # we run many different builds
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
+        platform: [ubuntu-20.04, macos-latest]
     steps:
       # checkout
       - name: Checkout code
